@@ -35,3 +35,40 @@
 // Esempio di output atteso
 
 // Data di nascita dello chef: 1990-06-15
+
+
+// Funzione asincrona che restituisce la data di nascita dello chef
+async function getChefBirthday(id: number): Promise<string> {
+    try {
+        // Recupera la ricetta
+        const recipeResponse = await fetch(`https://dummyjson.com/recipes/${id}`);
+        if (!recipeResponse.ok) {
+            throw new Error(`Errore nel recupero della ricetta con id ${id}`);
+        }
+        const recipeData = await recipeResponse.json();
+
+        const userId = recipeData.userId;
+
+        // Recupera le informazioni dello chef
+        const userResponse = await fetch(`https://dummyjson.com/users/${userId}`);
+        if (!userResponse.ok) {
+            throw new Error(`Errore nel recupero dell'utente con id ${userId}`);
+        }
+        const userData = await userResponse.json();
+
+        // Restituisci la data di nascita
+        return userData.birthDate;
+    } catch (error) {
+        // Gestione errori
+        if (error instanceof Error) {
+            throw new Error(`Errore: ${error.message}`);
+        } else {
+            throw new Error("Errore sconosciuto");
+        }
+    }
+}
+
+
+getChefBirthday(1)
+    .then(birthday => console.log("Data di nascita dello chef:", birthday))
+    .catch(error => console.error("Errore:", error.message));
